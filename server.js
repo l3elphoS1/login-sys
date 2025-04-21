@@ -6,6 +6,19 @@ const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
+const allowedOrigins = ['ecomsite-add-login.netlify.app'];
+
+const corsOptions = {
+    origin: function (origin, callback){
+        if(!origin) return callback(null,true);
+        if(allowedOrigins.indexOf(origin)===-1){
+            const msg = 'The CORS policy for this site does not allow access'
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    }
+}
+
 // ใช้ URI จาก .env file
 const uri = process.env.MONGODB_URI;
 
@@ -18,6 +31,7 @@ const app = express();
 
 // Middleware
 app.use(cors());
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
