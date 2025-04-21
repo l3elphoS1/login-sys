@@ -195,7 +195,7 @@ app.post("/register", async(req, res) => {
         console.log('User created successfully:', user._id);
 
         // Return success without password
-        res.json({
+        return res.json({
             message: "User registered successfully",
             user: {
                 username: user.username,
@@ -232,7 +232,7 @@ app.post("/register", async(req, res) => {
             });
         }
 
-        res.status(500).json({ 
+        return res.status(500).json({ 
             message: "Error during registration",
             error: error.message
         });
@@ -274,7 +274,7 @@ app.post("/login", async(req, res) => {
         const valid = await bcrypt.compare(password, user.password);
         if (valid) {
             console.log('Login successful for user:', user.username);
-            res.json({
+            return res.json({
                 message: "Login successful",
                 user: {
                     username: user.username,
@@ -284,7 +284,7 @@ app.post("/login", async(req, res) => {
             });
         } else {
             console.log('Invalid password for user:', user.username);
-            res.status(401).json({ message: "Invalid password or credentials" });
+            return res.status(401).json({ message: "Invalid password or credentials" });
         }
     } catch (error) {
         console.error('Login error details:', {
@@ -293,7 +293,7 @@ app.post("/login", async(req, res) => {
             code: error.code,
             stack: error.stack
         });
-        res.status(500).json({ 
+        return res.status(500).json({ 
             message: "Error during login",
             error: error.message
         });
@@ -302,12 +302,34 @@ app.post("/login", async(req, res) => {
 
 // Health check endpoint
 app.get("/health", (req, res) => {
-    res.json({ status: "ok", message: "Server is running" });
+    console.log('Health check requested');
+    return res.json({ 
+        status: "ok", 
+        message: "Server is running",
+        timestamp: new Date().toISOString()
+    });
 });
 
 // Serve index.html for the root route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Add a global error handler middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({
+    message: "Internal server error",
+    error: err.message || "Unknown error"
+  });
+});
+
+// Add a catch-all route handler for unmatched routes
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Not Found",
+    path: req.path
+  });
 });
 
 app.listen(port, () => {
