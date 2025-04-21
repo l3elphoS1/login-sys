@@ -6,7 +6,7 @@ const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['ecomsite-add-login.netlify.app'];
+const allowedOrigins = ['ecomsite-add-login.netlify.app', 'https://login-sys-5w4y.onrender.com'];
 
 const corsOptions = {
     origin: function (origin, callback){
