@@ -3,12 +3,11 @@ const renderBackendUrl = "https://login-sys-5w4y.onrender.com"; // Define Backen
 // Login form handler
 document.getElementById("login-form").addEventListener("submit", async(e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value; // This now holds username or email
+    const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
     try {
-        console.log("Sending login request to:", `${renderBackendUrl}/login`);
-        const res = await fetch(`${renderBackendUrl}/login`, {
+        const res = await fetch('/login', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -16,24 +15,10 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
             body: JSON.stringify({username, password}),
         });
 
-        console.log("Login response status:", res.status);
+        const result = await res.json();
         
-        // Get the response text first for debugging
-        const responseText = await res.text();
-        console.log("Login response text:", responseText);
-        
-        // Try to parse the response as JSON
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error("JSON parse error:", parseError);
-            throw new Error("Invalid response from server");
-        }
-        
-        // Check if the response is ok
         if (!res.ok) {
-            throw new Error(result.message || `HTTP error! status: ${res.status}`);
+            throw new Error(result.message || 'Login failed');
         }
         
         // Store user data in localStorage
@@ -44,7 +29,7 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
         document.getElementById("login-form").reset();
     } catch (error) {
         console.error("Login error:", error);
-        alert(error.message || "Error connecting to server during login");
+        alert(error.message || "Error during login");
     }
 });
 
@@ -56,8 +41,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const email = document.getElementById("reg-email").value;
     
     try {
-        console.log("Sending registration request to:", `${renderBackendUrl}/register`);
-        const res = await fetch(`${renderBackendUrl}/register`, {
+        const res = await fetch('/register', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -65,33 +49,17 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             body: JSON.stringify({username, password, email}),
         });
 
-        console.log("Registration response status:", res.status);
+        const result = await res.json();
         
-        // Get the response text first for debugging
-        const responseText = await res.text();
-        console.log("Registration response text:", responseText);
-        
-        // Try to parse the response as JSON
-        let result;
-        try {
-            result = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error("JSON parse error:", parseError);
-            throw new Error("Invalid response from server");
-        }
-        
-        // Check if the response is ok
         if (!res.ok) {
-            throw new Error(result.message || `HTTP error! status: ${res.status}`);
+            throw new Error(result.message || 'Registration failed');
         }
         
-        alert(result.message || "Registration successful");
-        
-        if (res.ok) {
-            document.getElementById("register-form").reset();
-        }
+        alert("Registration successful! Please login.");
+        document.getElementById("register-form").reset();
+        toggleForms(); // Switch to login form
     } catch (error) {
         console.error("Registration error:", error);
-        alert(error.message || "Error connecting to server during registration");
+        alert(error.message || "Error during registration");
     }
 });

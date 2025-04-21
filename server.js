@@ -1,337 +1,122 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require("bcrypt");
-const cors = require("cors");
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
-// ใช้ URI จาก .env file
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-    console.error('MONGODB_URI is not defined in .env file');
-    process.exit(1);
-}
-
-const app = express();
-
-// Configure CORS - more permissive for development
-const corsOptions = {
-  origin: '*', // Allow all origins during development
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
-
+// Middleware
+app.use(cors());
 app.use(express.json());
-
-// Serve static files
 app.use(express.static(path.join(__dirname)));
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
-// Connect to MongoDB with detailed error handling
-console.log('Attempting to connect to MongoDB...');
-mongoose.connect(uri, {
+// MongoDB Connection
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => {
-    console.log('Successfully connected to MongoDB.');
-})
-.catch(err => {
-    console.error('MongoDB connection error details:', {
-        name: err.name,
-        message: err.message,
-        code: err.code,
-        stack: err.stack
-    });
-    console.error('Please check your MongoDB connection string and make sure MongoDB is running');
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => {
+    console.error('MongoDB connection error:', err);
 });
 
-// Handle MongoDB connection events
-mongoose.connection.on('error', err => {
-    console.error('MongoDB connection error:', {
-        name: err.name,
-        message: err.message,
-        code: err.code
-    });
-});
-
-mongoose.connection.on('disconnected', () => {
-    console.log('MongoDB disconnected');
-});
-
-mongoose.connection.on('connected', () => {
-    console.log('MongoDB connected');
-});
-
-// ปรับปรุง Schema ให้มีการตรวจสอบข้อมูลละเอียดขึ้น
+// User Schema
 const userSchema = new mongoose.Schema({
-    username: {
-        type: String,
-        required: [true, 'Username is required'],
-        unique: true,
-        minlength: [3, 'Username must be at least 3 characters'],
-        maxlength: [20, 'Username cannot exceed 20 characters'],
-        trim: true,
-        validate: {
-            validator: function(v) {
-                return /^[a-zA-Z0-9_]+$/.test(v);
-            },
-            message: 'Username can only contain letters, numbers, and underscores'
-        }
-    },
-    password: {
-        type: String,
-        required: [true, 'Password is required'],
-        minlength: [6, 'Password must be at least 6 characters']
-    },
-    email:{
-        type: String,
-        required: [true,'Email is required'],
-        unique: true,
-        validate :{
-            validator: function(v){
-                return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
-            },
-            message: 'Please enter a valid email address'
-        }
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    lastUpdated: {
-        type: Date,
-        default: Date.now
-    }
+    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
-// Middleware ก่อนบันทึกข้อมูล
-userSchema.pre('save', function(next) {
-    this.lastUpdated = Date.now();
-    next();
-});
+const User = mongoose.model('User', userSchema);
 
-const User = mongoose.model("User", userSchema);
-
-// Get all users endpoint
-app.get("/users", async(req, res) => {
+// Register endpoint
+app.post('/register', async (req, res) => {
     try {
-        const users = await User.find({}, { 
-            username: 1, 
-            email: 1,
-            createdAt: 1, 
-            lastUpdated: 1,
-            _id: 1 
-        });
-        res.json(users);
-    } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).json({ 
-            message: "Error fetching users",
-            error: error.message 
-        });
-    }
-});
-
-// Registration endpoint with enhanced validation and error handling
-app.post("/register", async(req, res) => {
-    console.log('Received registration request:', { username: req.body.username, email: req.body.email });
-    
-    try {
-        const {username, password, email} = req.body;
-        
-        // Basic validation
-        if (!username || !password || !email) {
-            console.log('Missing required fields:', { username: !username, password: !password });
-            return res.status(400).json({ 
-                message: "Username and password are required",
-                errors: {
-                    username: !username ? 'Username is required' : null,
-                    password: !password ? 'Password is required' : null,
-                    email: !email ? 'Email is required' : null
-                }
-            });
-        }
-
-        // Password strength validation
-        if (password.length < 6) {
-            console.log('Password too short');
-            return res.status(400).json({ 
-                message: "Password must be at least 6 characters long"
-            });
-        }
+        const { username, email, password } = req.body;
 
         // Check if user already exists
-        console.log('Checking if user exists...');
-        const existingUser = await User.findOne({ username });
+        const existingUser = await User.findOne({ 
+            $or: [{ email }, { username }] 
+        });
+
         if (existingUser) {
-            console.log('Username already exists:', username);
-            return res.status(400).json({ message: "Username already exists" });
-        }else{
-            const existingEmail = await User.findOne({ email });
-            if(existingEmail){
-                console.log('Email already exists:', email);
-                return res.status(400).json({message: "Email already exists"});
-            }
+            return res.status(400).json({ 
+                message: 'User with this email or username already exists' 
+            });
         }
 
-        console.log('Hashing password...');
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create new user
-        console.log('Creating new user...');
         const user = new User({
-            username, 
-            password: hashedPassword,
-            email
+            username,
+            email,
+            password: hashedPassword
         });
 
         await user.save();
-        console.log('User created successfully:', user._id);
 
-        // Return success without password
-        return res.json({
-            message: "User registered successfully",
+        res.status(201).json({ 
+            message: 'Registration successful',
             user: {
+                id: user._id,
                 username: user.username,
-                email: user.email,
-                createdAt: user.createdAt,
-                id: user._id
+                email: user.email
             }
         });
     } catch (error) {
-        console.error('Registration error details:', {
-            name: error.name,
-            message: error.message,
-            code: error.code,
-            stack: error.stack
-        });
-        
-        // Handle mongoose validation errors
-        if (error.name === 'ValidationError') {
-            const errors = {};
-            for (let field in error.errors) {
-                errors[field] = error.errors[field].message;
-            }
-            return res.status(400).json({
-                message: "Validation error",
-                errors
-            });
-        }
-
-        // Handle MongoDB duplicate key error
-        if (error.code === 11000) {
-            return res.status(400).json({
-                message: "Username already exists",
-                error: "Duplicate username"
-            });
-        }
-
-        return res.status(500).json({ 
-            message: "Error during registration",
-            error: error.message
-        });
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Error during registration' });
     }
 });
 
-// Login endpoint with enhanced error handling
-app.post("/login", async(req, res) => {
-    console.log('Received login request:', { identifier: req.body.username });
-
+// Login endpoint
+app.post('/login', async (req, res) => {
     try {
-        const { username: identifier, password } = req.body;
+        const { username, password } = req.body;
 
-        if (!identifier || !password) {
-            console.log('Missing required fields:', { identifier: !identifier, password: !password });
-            return res.status(400).json({
-                message: "Username/Email and password are required",
-                errors: {
-                    identifier: !identifier ? 'Username or Email is required' : null,
-                    password: !password ? 'Password is required' : null
-                }
-            });
-        }
-
-        console.log('Finding user by username or email...');
+        // Find user by username or email
         const user = await User.findOne({
             $or: [
-                { username: identifier },
-                { email: identifier }
+                { username: username },
+                { email: username }
             ]
         });
 
         if (!user) {
-            console.log('User not found:', identifier);
-            return res.status(404).json({ message: "User not found or invalid credentials" });
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        console.log('Checking password for user:', user.username);
-        const valid = await bcrypt.compare(password, user.password);
-        if (valid) {
-            console.log('Login successful for user:', user.username);
-            return res.json({
-                message: "Login successful",
-                user: {
-                    username: user.username,
-                    email: user.email,
-                    id: user._id
-                }
-            });
-        } else {
-            console.log('Invalid password for user:', user.username);
-            return res.status(401).json({ message: "Invalid password or credentials" });
+        // Check password
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword) {
+            return res.status(401).json({ message: 'Invalid credentials' });
         }
+
+        res.json({
+            message: 'Login successful',
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
     } catch (error) {
-        console.error('Login error details:', {
-            name: error.name,
-            message: error.message,
-            code: error.code,
-            stack: error.stack
-        });
-        return res.status(500).json({ 
-            message: "Error during login",
-            error: error.message
-        });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Error during login' });
     }
 });
 
-// Health check endpoint
-app.get("/health", (req, res) => {
-    console.log('Health check requested');
-    return res.json({ 
-        status: "ok", 
-        message: "Server is running",
-        timestamp: new Date().toISOString()
-    });
-});
-
-// Serve index.html for the root route
+// Serve the login page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// Add a global error handler middleware
-app.use((err, req, res, next) => {
-  console.error('Global error handler:', err);
-  res.status(500).json({
-    message: "Internal server error",
-    error: err.message || "Unknown error"
-  });
-});
-
-// Add a catch-all route handler for unmatched routes
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Not Found",
-    path: req.path
-  });
-});
-
+// Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 });
