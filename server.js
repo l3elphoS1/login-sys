@@ -20,7 +20,7 @@ const app = express();
 // app.use(cors()); // Comment out or remove the old simple cors usage
 
 // Configure CORS
-const allowedOrigins = ['https://ecomsite-add-login.netlify.app'];
+const allowedOrigins = ['https://ecomsite-add-login.netlify.app', 'https://login-sys-5w4y.onrender.com'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -35,7 +35,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json());
+
+// Serve static files
 app.use(express.static(path.join(__dirname)));
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 // Connect to MongoDB with detailed error handling
 console.log('Attempting to connect to MongoDB...');
