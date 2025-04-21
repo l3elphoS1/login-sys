@@ -7,13 +7,14 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
     const password = document.getElementById("password").value;
 
     try {
-        const res = await fetch('/login', {
+        const res = await fetch(`${renderBackendUrl}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({username, password}),
+            body: JSON.stringify({ username, password }),
         });
+        
 
         // First check if the response is ok
         if (!res.ok) {
@@ -48,13 +49,14 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const email = document.getElementById("reg-email").value;
     
     try {
-        const res = await fetch('/register', {
+        const res = await fetch(`${renderBackendUrl}/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({username, password, email}),
+            body: JSON.stringify({ username, password, email }),
         });
+        
 
         // First check if the response is ok
         if (!res.ok) {
