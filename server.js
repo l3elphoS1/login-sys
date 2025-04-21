@@ -6,53 +6,39 @@ const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['ecomsite-add-login.netlify.app', 'https://login-sys-5w4y.onrender.com'];
+// Define allowed origins
+const allowedOrigins = ['https://login-sys-5w4y.onrender.com', 'http://localhost:3000'];
 
+// Configure CORS properly
 const corsOptions = {
-    origin: function (origin, callback){
-        if(!origin) return callback(null,true);
-        if(allowedOrigins.indexOf(origin)===-1){
-            const msg = 'The CORS policy for this site does not allow access'
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
             return callback(new Error(msg), false);
         }
         return callback(null, true);
-    }
-}
-
-// ใช้ URI จาก .env file
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-    console.error('MONGODB_URI is not defined in .env file');
-    process.exit(1);
-}
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization']
+};
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Apply CORS with options
+app.use(cors(corsOptions));
 
+// Parse JSON bodies
 app.use(express.json());
+
+// Serve static files
 app.use(express.static(path.join(__dirname)));
 
-// Add response headers middleware
+// Logging middleware
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    
-    // Handle preflight
-    if (req.method === 'OPTIONS') {
-        return res.status(204).end();
-    }
-
-    const originalJson = res.json;
-    res.json = function(data) {
-        console.log('Sending JSON response:', data);
-        return originalJson.call(this, data);
-    };
-
     console.log('Received request:', {
         method: req.method,
         path: req.path,
@@ -82,6 +68,11 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Helper function to send JSON responses
+const sendJsonResponse = (res, statusCode, data) => {
+    res.status(statusCode).json(data);
+};
+
 // Register endpoint
 app.post('/register', async (req, res) => {
     try {
@@ -92,12 +83,10 @@ app.post('/register', async (req, res) => {
 
         // Validate input
         if (!username || !email || !password) {
-            const response = {
+            return sendJsonResponse(res, 400, {
                 success: false,
                 message: 'All fields are required'
-            };
-            console.log('Sending validation error response:', response);
-            return res.status(400).send(JSON.stringify(response));
+            });
         }
 
         // Check if user already exists
@@ -106,12 +95,10 @@ app.post('/register', async (req, res) => {
         });
 
         if (existingUser) {
-            const response = {
+            return sendJsonResponse(res, 400, {
                 success: false,
                 message: 'User with this email or username already exists'
-            };
-            console.log('Sending existing user error response:', response);
-            return res.status(400).send(JSON.stringify(response));
+            });
         }
 
         // Hash password
@@ -127,8 +114,8 @@ app.post('/register', async (req, res) => {
         await user.save();
         console.log('User saved successfully with ID:', user._id);
 
-        // Prepare success response
-        const response = {
+        // Send success response
+        return sendJsonResponse(res, 201, {
             success: true,
             message: 'Registration successful',
             user: {
@@ -136,32 +123,15 @@ app.post('/register', async (req, res) => {
                 username: user.username,
                 email: user.email
             }
-        };
-
-        // Set response headers explicitly
-        res.setHeader('Content-Type', 'application/json');
-        
-        // Log the response we're about to send
-        console.log('Sending success response:', response);
-        
-        // Send the response
-        return res.status(201).send(JSON.stringify(response));
+        });
     } catch (error) {
         console.error('Registration error:', error);
         
-        const errorResponse = {
+        return sendJsonResponse(res, 500, {
             success: false,
             message: 'Error during registration',
             error: error.message
-        };
-        
-        // Set response headers explicitly
-        res.setHeader('Content-Type', 'application/json');
-        
-        // Log the error response we're about to send
-        console.log('Sending error response:', errorResponse);
-        
-        return res.status(500).send(JSON.stringify(errorResponse));
+        });
     }
 });
 
@@ -172,7 +142,7 @@ app.post('/login', async (req, res) => {
 
         // Validate input
         if (!username || !password) {
-            return res.status(400).json({
+            return sendJsonResponse(res, 400, {
                 success: false,
                 message: 'Username and password are required'
             });
@@ -187,7 +157,7 @@ app.post('/login', async (req, res) => {
         });
 
         if (!user) {
-            return res.status(401).json({
+            return sendJsonResponse(res, 401, {
                 success: false,
                 message: 'Invalid credentials'
             });
@@ -197,13 +167,13 @@ app.post('/login', async (req, res) => {
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
-            return res.status(401).json({
+            return sendJsonResponse(res, 401, {
                 success: false,
                 message: 'Invalid credentials'
             });
         }
 
-        res.json({
+        return sendJsonResponse(res, 200, {
             success: true,
             message: 'Login successful',
             user: {
@@ -214,7 +184,7 @@ app.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({
+        return sendJsonResponse(res, 500, {
             success: false,
             message: 'Error during login',
             error: error.message
@@ -227,29 +197,23 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// Test endpoint with explicit response
+// Test endpoint
 app.get('/test', (req, res) => {
-    const testResponse = {
+    return sendJsonResponse(res, 200, {
         message: 'Server is working!',
         timestamp: new Date().toISOString()
-    };
-    
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(testResponse));
+    });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err.stack);
     
-    const errorResponse = {
+    return sendJsonResponse(res, 500, {
         success: false,
         message: 'Something broke!',
         error: err.message
-    };
-    
-    res.setHeader('Content-Type', 'application/json');
-    res.status(500).send(JSON.stringify(errorResponse));
+    });
 });
 
 // Start server
