@@ -1,11 +1,13 @@
+const renderBackendUrl = "https://login-sys-5w4y.onrender.com"; // Define Backend URL
+
 // Login form handler
 document.getElementById("login-form").addEventListener("submit", async(e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value; // This now holds username or email
     const password = document.getElementById("password").value;
 
     try {
-        const res = await fetch("http://localhost:3000/login", {
+        const res = await fetch(`${renderBackendUrl}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -15,7 +17,6 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
 
         const result = await res.json();
 
-        
         if (res.ok) {
             // เก็บข้อมูล user ใน localStorage
             localStorage.setItem('user', JSON.stringify(result.user));
@@ -40,7 +41,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const password = document.getElementById("reg-password").value;
     const email = document.getElementById("reg-email").value;
     try {
-        const res = await fetch("http://localhost:3000/register", {
+        const res = await fetch(`${renderBackendUrl}/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -55,6 +56,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             document.getElementById("register-form").reset();
         }
     } catch (error) {
-        alert("Error connecting to server");
+        console.error("Registration error:", error); // Log registration errors
+        alert("Error connecting to server during registration");
     }
 });

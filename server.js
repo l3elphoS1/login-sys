@@ -6,19 +6,6 @@ const path = require('path');
 require('dotenv').config();
 const port = process.env.PORT || 3000;
 
-const allowedOrigins = ['ecomsite-add-login.netlify.app'];
-
-const corsOptions = {
-    origin: function (origin, callback){
-        if(!origin) return callback(null,true);
-        if(allowedOrigins.indexOf(origin)===-1){
-            const msg = 'The CORS policy for this site does not allow access'
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
-    }
-}
-
 // ใช้ URI จาก .env file
 const uri = process.env.MONGODB_URI;
 
@@ -30,7 +17,25 @@ if (!uri) {
 const app = express();
 
 // Middleware
-app.use(cors());
+// app.use(cors()); // Comment out or remove the old simple cors usage
+
+// Configure CORS
+const allowedOrigins = ['https://ecomsite-add-login.netlify.app'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    // or origins in the allowedOrigins list
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions)); // Use the configured CORS options
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
