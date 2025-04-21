@@ -54,15 +54,8 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ username, password, email }),
+            body: JSON.stringify({ username, password, email })
         });
-        
-
-        // First check if the response is ok
-        if (!res.ok) {
-            const errorData = await res.json().catch(() => ({ message: 'Server error' }));
-            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
-        }
 
         // Try to parse the response as JSON
         const result = await res.json();
