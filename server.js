@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const path = require('path');
 require('dotenv').config();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // ใช้ URI จาก .env file
 const uri = process.env.MONGODB_URI;
