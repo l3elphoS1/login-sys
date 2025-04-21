@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BYB9N5J8XJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BYB9N5J8XJ');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สินค้า</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+
+<body>
+    <script>
+        // ตรวจสอบว่ามีการ login หรือไม่
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            alert('Please log in to view products.');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <div class="navbar bg-gradient-to-r from-rose-500 to-blue-300 shadow-md flex-wrap">
+        <div class="navbar-start flex items-center gap-2">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgfbtCRv3Jy8YURtJgKUbA0O8mH3Y-NRYdig&s" alt="Site Logo" class="w-10 h-10 rounded-lg">
+            <a class="btn btn-ghost text-xl normal-case" href="./index.html">Aqua Shop</a>
+        </div>
+    
+        <!-- เมนูมือถือ -->
+        <div class="navbar-end ml-auto md:hidden">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-square btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-48 z-50">
+                    <li><a href="./shop.html">🏠 Homepage</a></li>
+                    <li><a href="./product.html">🛍️ สินค้า</a></li>
+                    <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+                    <li><a href="./pay.html">💳  ชำระเงิน</a></li>
+                    <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    
+        <!-- เมนูใหญ่ -->
+        <div class="hidden md:flex navbar-end">
+            <ul class="menu menu-horizontal px-1 text-base lg:text-lg">
+                <li><a href="./shop.html">🏠 Homepage</a></li>
+                <li><a href="./product.html">🛍️ สินค้า</a></li>
+                <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+                <li><a href="./pay.html">💳  ชำระเงิน</a></li>
+                <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    
+
+    <div class="max-w-screen-xl mx-auto px-4 py-6 items-center justify-center">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Card 1 -->
+            <div class="card product bg-white shadow-lg p-4 flex flex-col">
+                <img src="https://www.hakutea.jp/data/hakutea/product/HoukaiStar/Fashion/768477208458_select_1.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="flex-grow ">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="Star Rail" data-type="Bag">Collapse: Star
+                        Rail March 2WAY
+                        School Bag with Benefits
+                    </h2>
+                    <p class="mt-2 text-gray-600">Fabric: 100% polyester, 9% polyurethane Metal part: Zinc alloy, iron
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$1000</p>
+                    <button class="btn btn-primary mt-auto">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="card product bg-white shadow-lg p-4 flex flex-col">
+                <img src="https://www.hakutea.jp/data/hakutea/product/HoukaiStar/Fashion/768556234219_1.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="flex-grow">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="Star Rail" data-type="Skirt">Collapse:
+                        Star Rail March
+                        Skirt with Perks
+                    </h2>
+                    <p class="mt-2 text-gray-600">It comes with a
+                        bonus acrylic stand and is about 7.1 cm high.
+                        Fabric: 91% polyester, 9% polyurethane Check fabric: 65% polyester, 34% cotton, 1% polyester
+                        film fiber
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$600</p>
+                    <button class="btn btn-primary mt-auto">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+            <div class="card product bg-white shadow-lg p-4 flex flex-col">
+                <img src="https://www.hakutea.jp/data/hakutea/_/70726f647563742f486f756b6169537461722f46617368696f6e2f3736383535333836363538305f64657461696c5f335f305f393336392e6a7067003233300000740066.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="Star Rail" data-type="Shirt">Collapse:
+                        Star Rail March Long
+                        Sleeve Shirt with Benefits
+                    </h2>
+                    <p class="mt-2 text-gray-600">Comes with a bonus acrylic stand and is about 7.1 cm high.
+                        Outer: 80% polyester, 20% viscose Check fabric: 65% polyester, 34% cotton, 1% polyester film
+                        fiber
+
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$200</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+
+                </div>
+
+            </div>
+
+            <!-- card -->
+            <div class="card product bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/HoukaiStar/Fashion/768558619992_2.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="Star Rail" data-type="Jacket">Collapse:
+                        Star Rail March
+                        Jacket with Benefits
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">Comes
+                        with a bonus acrylic stand and is about 7.1 cm high.
+
+                        Female model: 158cm/43kg, Wearing size: S
+                        Male model: 183cm/60kg, Wearing size: M
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$600</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <div class="card product bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/HoukaiStar/Fashion/768558054273_detail_3_0_222.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="Star Rail" data-type="Tie">Collapse: Star
+                        Rail March Tie
+                        Ribbon Tie
+                    </h2>
+                    <p class="mt-2 text-gray-600">Blue fabric: 94% polyester, 6% polyurethane Check fabric: 65%
+                        polyester, 34% cotton, 1% polyester film fiber
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$300</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+            <!-- card 5 -->
+            <div class="card product bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/Genshin/Fashin/846877503054_02.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="genshin" data-type="Sweater">Genshin
+                        Impact Rio Sesri Image
+                        Sweater with Bonus Axta
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">material 62% cotton, 38% acrylic fiber
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$700</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <!-- card 6-->
+
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/Genshin/Fashin/833293693243_01.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="genshin" data-type="Hoodie">Genshin
+                        Impact Kaede Hara Manyo
+                        Image Hoodie with Bonus Axta
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">Benefit: 《Acrylic Stand》
+                        Material: Acrylic
+                        Size: Character height 7.2 cm, pedestal 2.5×2.5 cm Female
+
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$300</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <!-- card 7 -->
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://down-th.img.susercontent.com/file/sg-11134201-7rcev-lrck8en03d0v88@resize_w1200_nl"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="genshin" data-type="Plushie">Genshin
+                        Impact Furina plushie
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">ข้อมูลผลิตภัณฑ์
+                        ❤ การใช้งาน: บีบของเล่นตุ๊กตาอะนิเมะนุ่ม ๆ นี้เพื่อคลายความเครียดของคุณ
+                        นอกจากนี้ยังเป็นของขวัญที่ยอดเยี่ยมสำหรับแฟน ๆ การ์ตูนและผู้ที่ชื่นชอบอนิเมะ
+                        เป็นของตกแต่งบ้านก็จะเติมเต็มบ้านของคุณด้วยความรักและความอบอุ่น
+
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$10</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <!-- card8 -->
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://down-th.img.susercontent.com/file/sg-11134201-7rdy3-m0lev028p7jufb@resize_w3840_nl"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="genshin" data-type="Plushie">Genshin
+                        Impact Furina cat
+                        plushie
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">เพื่อนร่วมทาง: เป็นเพื่อนที่ดีที่สุดที่จะไปกับคุณ
+                        เมื่อคุณอยู่คนเดียวจะสามารถลดความเหงาและทำให้คุณมีความสุขและความปลอดภัย
+                        ของเล่นพิเศษ: เกมจาก Genshin Impact
+                        คุณจึงสามารถเป็นเจ้าของไดโนเสาร์สัตว์เลี้ยงตัวเดียวกับในเกมได้
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$25</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <!-- card 10 -->
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/Houkai3rd/887794420467_select_01.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="honkai" data-type="acrylic">Collapse 3rd HoYoland 2024 Keychain [Reservation within 180 days]
+
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">material	acrylic
+                        character	Kiana, Elysia and Senadia
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$25</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+
+            <!-- card 11 -->
+
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://goodsrepublic.com/media/binary/006/547/233/6547233.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="hololive" data-type="Plushie">Minato Aqua - Plush - hololive
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">Minato Aqua Super BIG Plush Toy "Virtual YouTuber" BOOTH Exclusive
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$125</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+            <!-- card 12  -->
+
+            <div class="card product w-auto bg-white shadow-lg p-4 flex flex-col h-full ">
+                <img src="https://www.hakutea.jp/data/hakutea/product/Houkai3rd/Figure/838983741618_01.jpg"
+                    alt="Product Image" class="w-full h-48 object-cover rounded-lg">
+                <div class="p-4">
+                    <h2 class="text-xl font-semibold text-gray-800" data-name="honkai" data-type="figure">Collapse 3rd Elysia Summer Fairy ♪ Gift+ 1/8 Figure [Pre-order July 2025]
+
+
+                    </h2>
+                    <p class="mt-2 text-gray-600">size	22×11.5×12cm
+                        material	PVC & ABS painted figure, 1/8 scale, dedicated pedestal included
+                        scale	1/8
+                    </p>
+                    <p class="mt-2 text-lg font-bold text-gray-900">$25</p>
+                    <button class="btn btn-primary mt-auto">Add
+                        to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--  updae product -->
+<img class="m-3 w-full " src="https://cf.shopee.co.th/file/th-11134258-7rasl-m2rm6cx8x4jw07">
+
+
+<script>
+   
+    function logout() {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+</script>
+
+<script src="./script.js"></script>
+
+</body>
+
+<footer class="flex justify-center items-center text-2xl  max-w-full w-full text-center py-6 px-4 h-full">
+    <p class="text-lg md:text-2xl"> © 2025 Attapong.All right Reserved</p></footer>
+
+</html>

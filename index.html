@@ -1,118 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="pastel">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f0f2f5;
-            padding: 20px;
-        }
-        .container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .form-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            padding: 10px;
-            background-color: #1877f2;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #166fe5;
-        }
-        h2 {
-            margin-top: 0;
-            color: #1c1e21;
-        }
-        #users-list {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 640px;
-        }
-        .user-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .user-item:last-child {
-            border-bottom: none;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="container">
-        <div class="form-container">
-            <h2>Login</h2>
-            <form id="login-form">
-                <input type="text" placeholder="Username" id="username" required>
-                <input type="password" placeholder="Password" id="password" required>
-                <button type="submit">Login</button>
-            </form>
+<body class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-300 to-cyan-300 p-4">
+    <div class="flex flex-col items-center gap-6">
+        <div class="card w-96 bg-base-100 shadow-xl">
+            <div class="card-body items-center text-center">
+                <h2 class="card-title">Login</h2>
+                <form id="login-form" class="w-full space-y-4">
+                    <input type="text" placeholder="Username or Email" id="username" class="input input-bordered w-full" required>
+                    <input type="password" placeholder="Password" id="password" class="input input-bordered w-full" required>
+                    <div class="card-actions justify-center w-full">
+                        <button type="submit" class="btn btn-primary w-full">Login</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="form-container">
-            <h2>Register</h2>
-            <form id="register-form">
-                <input type="text" placeholder="Username" id="reg-username" required>
-                <input type="password" placeholder="Password" id="reg-password" required>
-                <button type="submit">Register</button>
-            </form>
+
+        <div class="card w-96 bg-base-100 shadow-xl">
+            <div class="card-body items-center text-center">
+                <h2 class="card-title">Register</h2>
+                <form id="register-form" class="w-full space-y-4">
+                    <input type="text" placeholder="Username" id="reg-username" class="input input-bordered w-full" required>
+                    <input type="password" placeholder="Password" id="reg-password" class="input input-bordered w-full" required>
+                    <input type="email" , placeholder="Email" id="reg-email" class="input input-bordered w-full" required>
+                    <div class="card-actions justify-center w-full">
+                        <button type="submit" class="btn btn-secondary w-full">Register</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    
-    <div id="users-list">
-        <h2>Registered Users</h2>
-        <div id="users-container"></div>
-        <button onclick="loadUsers()" style="margin-top: 10px;">Refresh Users List</button>
     </div>
 
     <script src="login.js"></script>
-    <script>
-        async function loadUsers() {
-            try {
-                const response = await fetch('http://localhost:3000/users');
-                const users = await response.json();
-                const container = document.getElementById('users-container');
-                container.innerHTML = users.map(user => 
-                    `<div class="user-item">Username: ${user.username}</div>`
-                ).join('');
-            } catch (error) {
-                console.error('Error loading users:', error);
-                alert('Error loading users list');
-            }
-        }
-
-        // Load users when page loads
-        loadUsers();
-    </script>
 </body>
 </html>

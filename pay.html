@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+    <head>
+        <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BYB9N5J8XJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BYB9N5J8XJ');
+</script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Payment - Aqua Shop</title>
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+
+<body>
+    <script>
+        // ตรวจสอบว่ามีการ login หรือไม่
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            alert('Please log in to proceed to payment.');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+    <div class="navbar bg-gradient-to-r from-rose-500 to-blue-300 shadow-md flex-wrap">
+        <div class="navbar-start flex items-center gap-2">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgfbtCRv3Jy8YURtJgKUbA0O8mH3Y-NRYdig&s" alt="Site Logo" class="w-10 h-10 rounded-lg">
+            <a class="btn btn-ghost text-xl normal-case" href="./index.html">Aqua Shop</a>
+        </div>
+    
+        <!-- เมนูมือถือ -->
+        <div class="navbar-end ml-auto md:hidden">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-square btn-ghost">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </label>
+                <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-48 z-50">
+                    <li><a href="./shop.html">🏠 Homepage</a></li>
+                    <li><a href="./product.html">🛍️ สินค้า</a></li>
+                    <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+                    <li><a href="./pay.html">💳  ชำระเงิน</a></li>
+                    <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    
+        <!-- เมนูใหญ่ -->
+        <div class="hidden md:flex navbar-end">
+            <ul class="menu menu-horizontal px-1 text-base lg:text-lg">
+                <li><a href="./shop.html">🏠 Homepage</a></li>
+                <li><a href="./product.html">🛍️ สินค้า</a></li>
+                <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+                <li><a href="./pay.html">💳  ชำระเงิน</a></li>
+                <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="max-w-screen-xl mx-auto px-4 py-6">
+        <h1 class="text-3xl font-bold mb-6 text-center">ชำระเงิน</h1>
+        
+        <!-- Order Summary Container -->
+        <div id="order-summary-container" class="mb-8">
+            <!-- JavaScript will populate this section -->
+        </div>
+        
+        <!-- Payment Methods -->
+        <div class="max-w-md mx-auto">
+            <h2 class="text-2xl font-bold mb-4 text-center">วิธีการชำระเงิน</h2>
+            <div class="text-center">
+
+                <p class="text-2xl">ยอดชำระ</p>
+
+                <span id="totalAmount" class="text-2xl font-bold text-green-600 m-4"></span>
+<br>
+            <select class="select select-borded max-w-xs text-center m-4">
+                <option disabled selected>เลือกตัวเลือก</option>
+                <option>เงินสด</option>
+                <option>โอนธนาคาร</option>
+                <option>บัตรเครดิต</option>
+            </select>
+        </div>
+           
+                
+                <!-- Payment Form -->
+                <form id="payment-form" class="mt-6">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+                            ชื่อ-นามสกุล
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="name" type="text" placeholder="ชื่อ-นามสกุล" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                            อีเมล
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="อีเมล" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">
+                            เบอร์โทรศัพท์
+                        </label>
+                        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="phone" type="tel" placeholder="เบอร์โทรศัพท์" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+                            ที่อยู่จัดส่ง
+                        </label>
+                        <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="address" placeholder="ที่อยู่จัดส่ง" rows="3" required></textarea>
+                    </div>
+                    <div>
+
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button id="payBtn" class="btn btn-primary w-full" type="submit">
+                            ยืนยันการชำระเงิน
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <img class="m-3 w-full " src="https://cf.shopee.co.th/file/th-11134258-7rasl-m2rm6cx8x4jw07">
+    <footer class="flex justify-center items-center text-2xl  max-w-full w-full text-center py-6 px-4 h-full">
+        <p class="text-lg md:text-2xl"> © 2025 Attapong.All right Reserved</p></footer>
+    
+
+      
+    <script src="./script.js"></script>
+    <script>
+         document.addEventListener('DOMContentLoaded', function () {
+    const totalElement = document.getElementById('totalAmount');
+    const total = localStorage.getItem('aquashop-total');
+
+    if (total && totalElement) {
+      totalElement.textContent = `$${total}`;
+    } else {
+      totalElement.textContent = '0';
+    }
+  });
+    </script>
+
+    <script>
+        // ตรวจสอบว่ามีการ login หรือไม่
+        if (!JSON.parse(localStorage.getItem('user'))) {
+            alert('Please log in to proceed to payment.');
+            window.location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
