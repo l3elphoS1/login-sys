@@ -21,21 +21,18 @@ const app = express();
 
 // Configure CORS
 const allowedOrigins = ['https://ecomsite-add-login.netlify.app'];
-
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    // or origins in the allowedOrigins list
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions)); // Use the configured CORS options
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
