@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BYB9N5J8XJ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-BYB9N5J8XJ');
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage✨</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+
+
+<body>
+  <div class="navbar bg-gradient-to-r from-rose-500 to-blue-300 shadow-md flex-wrap">
+    <div class="navbar-start flex items-center gap-2">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTgfbtCRv3Jy8YURtJgKUbA0O8mH3Y-NRYdig&s" alt="Site Logo" class="w-10 h-10 rounded-lg">
+        <a class="btn btn-ghost text-xl normal-case" href="./index.html">Aqua Shop</a>
+    </div>
+
+    <!-- เมนูมือถือ -->
+    <div class="navbar-end ml-auto md:hidden">
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-square btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </label>
+            <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-48 z-50">
+                <li><a href="./index.html">🏠 Homepage</a></li>
+                <li><a href="./product.html">🛍️ สินค้า</a></li>
+                <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+                <li><a href="./pay.html">💳 ชำระเงิน</a></li>
+                <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- เมนูใหญ่ -->
+    <div class="hidden md:flex navbar-end">
+        <ul class="menu menu-horizontal px-1 text-base lg:text-lg">
+            <li><a href="./index.html">🏠 Homepage</a></li>
+            <li><a href="./product.html">🛍️ สินค้า</a></li>
+            <li><a href="./cart.html">🛒 ตะกร้า</a></li>
+            <li><a href="./pay.html">💳 ชำระเงิน</a></li>
+            <li><a href="#" onclick="logout()">🚪 Logout</a></li>
+        </ul>
+    </div>
+</div>
+    <!-- <div class="card-body text-2xl items-center justify-center font-bold p-2"></div> -->
+<!-- Carousel container -->
+<div class="max-w-7xl mx-auto px-4 my-8">
+  <div class="card-body text-2xl items-center justify-center font-bold p-2">สินค้าขายดี</div>
+  
+  <!-- Fixed height container instead of aspect ratio -->
+
+  
+  <!-- Responsive height container -->
+  <div class="relative h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] w-full"> 
+    <div class="carousel w-full h-full rounded-xl ">
+      <!-- Item 1 -->
+      <div id="item1" class="carousel-item relative w-full shadow-md">
+        <div class="w-full h-full  ">
+          <img 
+            src="https://hoyo.global/wp-content/uploads/2023/06/march-impression-apparel-official-merch-hsr-1788.webp"
+            class="w-full h-full object-contain md:object-cover"
+            alt="Carousel image 1" />
+        </div>
+      </div>
+      
+      <!-- Item 2 -->
+      <div id="item2" class="carousel-item relative w-full">
+        <div class="w-full h-full ">
+          <img
+            src="https://preview.redd.it/genshins-masquerade-of-the-guilty-official-wallpapers-v0-18k4xsusjt2c1.jpg?width=1920&format=pjpg&auto=webp&s=3804faff879e4e118d4dbc3db60b520e0f117ca7"
+            class="w-full h-full object-contain md:object-cover"
+            alt="Carousel image 2" />
+        </div>
+      </div>
+      
+      <!-- Item 3 -->
+      <div id="item3" class="carousel-item relative w-full">
+        <div class="w-full h-full ">
+          <img
+            src="https://r4.wallpaperflare.com/wallpaper/242/657/280/furina-genshin-impact-genshin-impact-video-game-characters-hd-wallpaper-f94676b606b3ba376facaf12ef8681f0.jpg"
+            class="w-full h-full object-contain md:object-cover"
+            alt="Carousel image 3" />
+        </div>
+      </div>
+      
+      <!-- Item 4 -->
+      <div id="item4" class="carousel-item relative w-full">
+        <div class="w-full h-full ">
+          <img
+            src="https://r4.wallpaperflare.com/wallpaper/103/339/597/furina-genshin-impact-genshin-impact-pixiv-hd-wallpaper-d866bdb830905cb820ecf15e3882248a.jpg"
+            class="w-full h-full object-contain md:object-cover"
+            alt="Carousel image 4" />
+        </div>
+      </div>
+      
+      <!-- Item 5 -->
+      <div id="item5" class="carousel-item relative w-full">
+        <div class="w-full h-full ">
+          <img
+            src="https://styles.redditmedia.com/t5_82fddg/styles/image_widget_6wkt1tdgq34c1.jpg?format=pjpg&s=b1e6638404ddedb5a812fe7c1a2dd08efa234077"
+            class="w-full h-full object-contain md:object-cover"
+            alt="Carousel image 5" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel navigation with improved styling -->
+  <div class="flex justify-center w-full py-4 gap-2">
+    <a href="#item1" class="btn btn-xs btn-primary">1</a>
+    <a href="#item2" class="btn btn-xs btn-primary">2</a>
+    <a href="#item3" class="btn btn-xs btn-primary">3</a>
+    <a href="#item4" class="btn btn-xs btn-primary">4</a>
+    <a href="#item5" class="btn btn-xs btn-primary">5</a>
+  </div>
+</div>
+    
+
+<h1 class="text-3xl font-bold text-red-300 flex justify-center items-center">Promotion </h1>
+
+<img class="m-3 w-full " src="https://cf.shopee.co.th/file/th-11134258-7rasl-m2rm6cx8x4jw07">
+<div class="flex items-center justify-center">
+<div class="card w-80 bg-base-200 gap-2 py-2 gap-4 items-center justify-center">
+    <div class="card-body gap-3">
+        <form id="emailForm" class="space-y-4">
+          <!-- Email input field -->
+          <input placeholder="Email" id="emailInput" class="input w-full" required />
+          
+          <!-- Newsletter checkbox -->
+          <label class="label flex items-center gap-2">
+            <input type="checkbox" class="toggle toggle-sm" />
+            Submit to newsletter
+          </label>
+          
+          <!-- Terms of use checkbox -->
+          <label class="label flex items-center gap-2">
+            <input type="checkbox" class="toggle toggle-sm" />
+            Accept terms of use
+          </label>
+          
+          <!-- Save button -->
+          <div class="flex justify-center mt-4">
+            <button id="submit" class="btn btn-neutral p-3 w-auto">Save</button>
+          </div>
+        </form>
+      </div>
+    
+  </div>
+</div>
+<script>
+    // ตรวจสอบว่ามีการ login หรือไม่
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+        alert('Please log in to access the shop.');
+        window.location.href = 'index.html';
+    }
+
+    function logout() {
+        localStorage.removeItem('user');
+        window.location.href = 'index.html';
+    }
+</script>
+
+<script src="./script.js"></script>    
+</script>
+</body>
+<footer class="flex justify-center items-center text-2xl  max-w-full w-full text-center py-6 px-4 h-full">
+  <p class="text-lg md:text-2xl"> © 2025 Attapong.All right Reserved</p></footer>
+</html>

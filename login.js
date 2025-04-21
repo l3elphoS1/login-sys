@@ -14,18 +14,22 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
         });
 
         const result = await res.json();
+
         
         if (res.ok) {
             // เก็บข้อมูล user ใน localStorage
             localStorage.setItem('user', JSON.stringify(result.user));
-            // redirect ไปยังหน้า landing
-            window.location.href = "landing.html";
+            // แสดง alert ก่อน redirect
+            alert("Login successful");
+            // redirect ไปยังหน้า shop
+            window.location.href = "shop.html";
         } else {
             alert(result.message);
         }
         document.getElementById("login-form").reset();
     } catch (error) {
-        alert("Error connecting to server");
+        console.error("Login error:", error);
+        alert("Error connecting to server during login");
     }
 });
 
@@ -34,14 +38,14 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     e.preventDefault();
     const username = document.getElementById("reg-username").value;
     const password = document.getElementById("reg-password").value;
-
+    const email = document.getElementById("reg-email").value;
     try {
         const res = await fetch("http://localhost:3000/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({username, password}),
+            body: JSON.stringify({username, password, email}),
         });
 
         const result = await res.json();

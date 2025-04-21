@@ -78,6 +78,17 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Password is required'],
         minlength: [6, 'Password must be at least 6 characters']
     },
+    email:{
+        type: String,
+        required: [true,'Email is required'],
+        unique: true,
+        validate :{
+            validator: function(v){
+                return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
+            },
+            message: 'Please enter a valid email address'
+        }
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -101,6 +112,7 @@ app.get("/users", async(req, res) => {
     try {
         const users = await User.find({}, { 
             username: 1, 
+            email: 1,
             createdAt: 1, 
             lastUpdated: 1,
             _id: 1 
@@ -117,19 +129,20 @@ app.get("/users", async(req, res) => {
 
 // Registration endpoint with enhanced validation and error handling
 app.post("/register", async(req, res) => {
-    console.log('Received registration request:', { username: req.body.username });
+    console.log('Received registration request:', { username: req.body.username, email: req.body.email });
     
     try {
-        const {username, password} = req.body;
+        const {username, password, email} = req.body;
         
         // Basic validation
-        if (!username || !password) {
+        if (!username || !password || !email) {
             console.log('Missing required fields:', { username: !username, password: !password });
             return res.status(400).json({ 
                 message: "Username and password are required",
                 errors: {
                     username: !username ? 'Username is required' : null,
-                    password: !password ? 'Password is required' : null
+                    password: !password ? 'Password is required' : null,
+                    email: !email ? 'Email is required' : null
                 }
             });
         }
@@ -148,6 +161,12 @@ app.post("/register", async(req, res) => {
         if (existingUser) {
             console.log('Username already exists:', username);
             return res.status(400).json({ message: "Username already exists" });
+        }else{
+            const existingEmail = await User.findOne({ email });
+            if(existingEmail){
+                console.log('Email already exists:', email);
+                return res.status(400).json({message: "Email already exists"});
+            }
         }
 
         console.log('Hashing password...');
@@ -157,7 +176,8 @@ app.post("/register", async(req, res) => {
         console.log('Creating new user...');
         const user = new User({
             username, 
-            password: hashedPassword
+            password: hashedPassword,
+            email
         });
 
         await user.save();
@@ -168,6 +188,7 @@ app.post("/register", async(req, res) => {
             message: "User registered successfully",
             user: {
                 username: user.username,
+                email: user.email,
                 createdAt: user.createdAt,
                 id: user._id
             }
@@ -209,44 +230,50 @@ app.post("/register", async(req, res) => {
 
 // Login endpoint with enhanced error handling
 app.post("/login", async(req, res) => {
-    console.log('Received login request:', { username: req.body.username });
-    
+    console.log('Received login request:', { identifier: req.body.username });
+
     try {
-        const {username, password} = req.body;
-        
-        if (!username || !password) {
-            console.log('Missing required fields:', { username: !username, password: !password });
-            return res.status(400).json({ 
-                message: "Username and password are required",
+        const { username: identifier, password } = req.body;
+
+        if (!identifier || !password) {
+            console.log('Missing required fields:', { identifier: !identifier, password: !password });
+            return res.status(400).json({
+                message: "Username/Email and password are required",
                 errors: {
-                    username: !username ? 'Username is required' : null,
+                    identifier: !identifier ? 'Username or Email is required' : null,
                     password: !password ? 'Password is required' : null
                 }
             });
         }
 
-        console.log('Finding user...');
-        const user = await User.findOne({username});
+        console.log('Finding user by username or email...');
+        const user = await User.findOne({
+            $or: [
+                { username: identifier },
+                { email: identifier }
+            ]
+        });
 
         if (!user) {
-            console.log('User not found:', username);
-            return res.status(404).json({message: "User not found"});
+            console.log('User not found:', identifier);
+            return res.status(404).json({ message: "User not found or invalid credentials" });
         }
 
-        console.log('Checking password...');
+        console.log('Checking password for user:', user.username);
         const valid = await bcrypt.compare(password, user.password);
         if (valid) {
-            console.log('Login successful for user:', username);
+            console.log('Login successful for user:', user.username);
             res.json({
                 message: "Login successful",
                 user: {
                     username: user.username,
+                    email: user.email,
                     id: user._id
                 }
             });
         } else {
-            console.log('Invalid password for user:', username);
-            res.status(401).json({message: "Invalid password"});
+            console.log('Invalid password for user:', user.username);
+            res.status(401).json({ message: "Invalid password or credentials" });
         }
     } catch (error) {
         console.error('Login error details:', {
