@@ -15,22 +15,23 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
             body: JSON.stringify({username, password}),
         });
 
-        const result = await res.json();
-
-        if (res.ok) {
-            // เก็บข้อมูล user ใน localStorage
-            localStorage.setItem('user', JSON.stringify(result.user));
-            // แสดง alert ก่อน redirect
-            alert("Login successful");
-            // redirect ไปยังหน้า shop
-            window.location.href = "shop.html";
-        } else {
-            alert(result.message);
+        // Check if the response is ok before trying to parse JSON
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(errorText || `HTTP error! status: ${res.status}`);
         }
+
+        const result = await res.json();
+        
+        // Store user data in localStorage
+        localStorage.setItem('user', JSON.stringify(result.user));
+        alert("Login successful");
+        window.location.href = "shop.html";
+        
         document.getElementById("login-form").reset();
     } catch (error) {
         console.error("Login error:", error);
-        alert("Error connecting to server during login");
+        alert(error.message || "Error connecting to server during login");
     }
 });
 
@@ -40,6 +41,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const username = document.getElementById("reg-username").value;
     const password = document.getElementById("reg-password").value;
     const email = document.getElementById("reg-email").value;
+    
     try {
         const res = await fetch(`${renderBackendUrl}/register`, {
             method: "POST",
@@ -49,6 +51,12 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             body: JSON.stringify({username, password, email}),
         });
 
+        // Check if the response is ok before trying to parse JSON
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(errorText || `HTTP error! status: ${res.status}`);
+        }
+
         const result = await res.json();
         alert(result.message);
         
@@ -56,7 +64,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             document.getElementById("register-form").reset();
         }
     } catch (error) {
-        console.error("Registration error:", error); // Log registration errors
-        alert("Error connecting to server during registration");
+        console.error("Registration error:", error);
+        alert(error.message || "Error connecting to server during registration");
     }
 });
