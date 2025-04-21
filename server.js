@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+
+const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
@@ -36,14 +38,23 @@ app.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
+        // Validate input
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required'
+            });
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ 
             $or: [{ email }, { username }] 
         });
 
         if (existingUser) {
-            return res.status(400).json({ 
-                message: 'User with this email or username already exists' 
+            return res.status(400).json({
+                success: false,
+                message: 'User with this email or username already exists'
             });
         }
 
@@ -59,7 +70,8 @@ app.post('/register', async (req, res) => {
 
         await user.save();
 
-        res.status(201).json({ 
+        res.status(201).json({
+            success: true,
             message: 'Registration successful',
             user: {
                 id: user._id,
@@ -69,7 +81,11 @@ app.post('/register', async (req, res) => {
         });
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).json({ message: 'Error during registration' });
+        res.status(500).json({
+            success: false,
+            message: 'Error during registration',
+            error: error.message
+        });
     }
 });
 
@@ -77,6 +93,14 @@ app.post('/register', async (req, res) => {
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
+
+        // Validate input
+        if (!username || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username and password are required'
+            });
+        }
 
         // Find user by username or email
         const user = await User.findOne({
@@ -87,17 +111,24 @@ app.post('/login', async (req, res) => {
         });
 
         if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
         }
 
         // Check password
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid credentials'
+            });
         }
 
         res.json({
+            success: true,
             message: 'Login successful',
             user: {
                 id: user._id,
@@ -107,13 +138,27 @@ app.post('/login', async (req, res) => {
         });
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Error during login' });
+        res.status(500).json({
+            success: false,
+            message: 'Error during login',
+            error: error.message
+        });
     }
 });
 
 // Serve the login page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: 'Something broke!',
+        error: err.message
+    });
 });
 
 // Start server

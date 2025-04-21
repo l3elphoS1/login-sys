@@ -15,9 +15,16 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
             body: JSON.stringify({username, password}),
         });
 
+        // First check if the response is ok
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ message: 'Server error' }));
+            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+        }
+
+        // Try to parse the response as JSON
         const result = await res.json();
         
-        if (!res.ok) {
+        if (!result.success) {
             throw new Error(result.message || 'Login failed');
         }
         
@@ -49,9 +56,16 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             body: JSON.stringify({username, password, email}),
         });
 
+        // First check if the response is ok
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({ message: 'Server error' }));
+            throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+        }
+
+        // Try to parse the response as JSON
         const result = await res.json();
         
-        if (!res.ok) {
+        if (!result.success) {
             throw new Error(result.message || 'Registration failed');
         }
         
