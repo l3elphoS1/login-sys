@@ -4,27 +4,33 @@ const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
-
-const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-// app.use(cors()); // Comment out or remove the old simple cors usage
+const allowedOrigins = ['ecomsite-add-login.netlify.app'];
 
-// Configure CORS
-const allowedOrigins = ['https://ecomsite-add-login.netlify.app'];
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    origin: function (origin, callback){
+        if(!origin) return callback(null,true);
+        if(allowedOrigins.indexOf(origin)===-1){
+            const msg = 'The CORS policy for this site does not allow access'
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
     }
-  },
-  optionsSuccessStatus: 200
-};
+}
 
-app.use(cors(corsOptions));
+// ใช้ URI จาก .env file
+const uri = process.env.MONGODB_URI;
+
+if (!uri) {
+    console.error('MONGODB_URI is not defined in .env file');
+    process.exit(1);
+}
+
+const app = express();
+
+// Middleware
+app.use(cors());
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));

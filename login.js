@@ -3,7 +3,7 @@ const renderBackendUrl = "https://login-sys-5w4y.onrender.com"; // Define Backen
 // Login form handler
 document.getElementById("login-form").addEventListener("submit", async(e) => {
     e.preventDefault();
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value; // This now holds username or email
     const password = document.getElementById("password").value;
 
     try {
@@ -24,16 +24,18 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
 
         // Try to parse the response as JSON
         const result = await res.json();
+
         
-        if (!result.success) {
-            throw new Error(result.message || 'Login failed');
+        if (res.ok) {
+            // เก็บข้อมูล user ใน localStorage
+            localStorage.setItem('user', JSON.stringify(result.user));
+            // แสดง alert ก่อน redirect
+            alert("Login successful");
+            // redirect ไปยังหน้า shop
+            window.location.href = "shop.html";
+        } else {
+            alert(result.message);
         }
-        
-        // Store user data in localStorage
-        localStorage.setItem('user', JSON.stringify(result.user));
-        alert("Login successful");
-        window.location.href = "shop.html";
-        
         document.getElementById("login-form").reset();
     } catch (error) {
         console.error("Login error:", error);
@@ -49,7 +51,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const email = document.getElementById("reg-email").value;
     
     try {
-        const res = await fetch(`${renderBackendUrl}/register`, {
+        const res = await fetch("http://localhost:3000/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -68,7 +70,6 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
         document.getElementById("register-form").reset();
         toggleForms(); // Switch to login form
     } catch (error) {
-        console.error("Registration error:", error);
-        alert(error.message || "Error during registration");
+        alert("Error connecting to server");
     }
 });
