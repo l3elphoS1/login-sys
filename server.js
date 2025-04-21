@@ -16,19 +16,11 @@ if (!uri) {
 
 const app = express();
 
-// Middleware
-// app.use(cors()); // Comment out or remove the old simple cors usage
-
-// Configure CORS
-const allowedOrigins = ['https://ecomsite-add-login.netlify.app', 'https://login-sys-5w4y.onrender.com'];
+// Configure CORS - more permissive for development
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: '*', // Allow all origins during development
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200
 };
 
@@ -306,6 +298,11 @@ app.post("/login", async(req, res) => {
             error: error.message
         });
     }
+});
+
+// Health check endpoint
+app.get("/health", (req, res) => {
+    res.json({ status: "ok", message: "Server is running" });
 });
 
 // Serve index.html for the root route

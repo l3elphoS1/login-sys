@@ -7,6 +7,7 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
     const password = document.getElementById("password").value;
 
     try {
+        console.log("Sending login request to:", `${renderBackendUrl}/login`);
         const res = await fetch(`${renderBackendUrl}/login`, {
             method: "POST",
             headers: {
@@ -15,13 +16,25 @@ document.getElementById("login-form").addEventListener("submit", async(e) => {
             body: JSON.stringify({username, password}),
         });
 
-        // Check if the response is ok before trying to parse JSON
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(errorText || `HTTP error! status: ${res.status}`);
+        console.log("Login response status:", res.status);
+        
+        // Get the response text first for debugging
+        const responseText = await res.text();
+        console.log("Login response text:", responseText);
+        
+        // Try to parse the response as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            throw new Error("Invalid response from server");
         }
-
-        const result = await res.json();
+        
+        // Check if the response is ok
+        if (!res.ok) {
+            throw new Error(result.message || `HTTP error! status: ${res.status}`);
+        }
         
         // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify(result.user));
@@ -43,6 +56,7 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
     const email = document.getElementById("reg-email").value;
     
     try {
+        console.log("Sending registration request to:", `${renderBackendUrl}/register`);
         const res = await fetch(`${renderBackendUrl}/register`, {
             method: "POST",
             headers: {
@@ -51,14 +65,27 @@ document.getElementById("register-form").addEventListener("submit", async(e) => 
             body: JSON.stringify({username, password, email}),
         });
 
-        // Check if the response is ok before trying to parse JSON
-        if (!res.ok) {
-            const errorText = await res.text();
-            throw new Error(errorText || `HTTP error! status: ${res.status}`);
+        console.log("Registration response status:", res.status);
+        
+        // Get the response text first for debugging
+        const responseText = await res.text();
+        console.log("Registration response text:", responseText);
+        
+        // Try to parse the response as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            throw new Error("Invalid response from server");
         }
-
-        const result = await res.json();
-        alert(result.message);
+        
+        // Check if the response is ok
+        if (!res.ok) {
+            throw new Error(result.message || `HTTP error! status: ${res.status}`);
+        }
+        
+        alert(result.message || "Registration successful");
         
         if (res.ok) {
             document.getElementById("register-form").reset();
